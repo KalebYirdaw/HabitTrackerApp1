@@ -72,6 +72,8 @@ class HabitsFragment : Fragment() {
                             habits.addAll(it)
                             habitAdapter.notifyDataSetChanged()
                         }
+                    } else if (response.code() == 401) {
+                        Toast.makeText(context, "Session expired. Please log in again.", Toast.LENGTH_LONG).show()
                     } else {
                         Toast.makeText(context, "Failed to load habits", Toast.LENGTH_SHORT).show()
                     }

@@ -5,6 +5,9 @@ data class Habit(
     val name: String = "",
     val description: String? = null,
     val frequency: String = "Daily",
+    val color: String? = "#2196F3",
+    val goalValue: Int = 1,
+    val taskDays: String? = "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
     val isActive: Boolean = true,
     val currentStreak: Int = 0,
     val longestStreak: Int = 0,
@@ -16,14 +19,20 @@ data class Habit(
 data class CreateHabitRequest(
     val name: String,
     val description: String?,
-    val frequency: String
+    val frequency: String,
+    val color: String? = null,
+    val goalValue: Int = 1,
+    val taskDays: String? = null
 )
 
 data class UpdateHabitRequest(
     val name: String,
     val description: String?,
     val frequency: String,
-    val isActive: Boolean
+    val isActive: Boolean,
+    val color: String? = null,
+    val goalValue: Int = 1,
+    val taskDays: String? = null
 )
 
 data class HabitCompletion(

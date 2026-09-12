@@ -20,7 +20,45 @@
         android:id="@+id/nav_add_habit"
         android:name="com.example.habittrackerapp.ui.habits.AddHabitFragment"
         android:label="Add Habit"
-        tools:layout="@layout/fragment_add_habit" />
+        tools:layout="@layout/fragment_add_habit">
+        <action
+            android:id="@+id/action_addHabit_to_details"
+            app:destination="@id/nav_habit_details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_habit_details"
+        android:name="com.example.habittrackerapp.ui.habits.HabitDetailsFragment"
+        android:label="Habit Details"
+        tools:layout="@layout/fragment_habit_details">
+        <action
+            android:id="@+id/action_details_to_color"
+            app:destination="@id/nav_color_picker" />
+        <action
+            android:id="@+id/action_details_to_goal"
+            app:destination="@id/nav_goal_picker" />
+        <action
+            android:id="@+id/action_details_to_freq"
+            app:destination="@id/nav_freq_picker" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_color_picker"
+        android:name="com.example.habittrackerapp.ui.habits.ColorPickerFragment"
+        android:label="Choose Color"
+        tools:layout="@layout/fragment_color_picker" />
+
+    <fragment
+        android:id="@+id/nav_goal_picker"
+        android:name="com.example.habittrackerapp.ui.habits.GoalPickerFragment"
+        android:label="Set Goal"
+        tools:layout="@layout/fragment_goal_picker" />
+
+    <fragment
+        android:id="@+id/nav_freq_picker"
+        android:name="com.example.habittrackerapp.ui.habits.FrequencyPickerFragment"
+        android:label="Set Frequency"
+        tools:layout="@layout/fragment_frequency_picker" />
 
     <fragment
         android:id="@+id/nav_journal"

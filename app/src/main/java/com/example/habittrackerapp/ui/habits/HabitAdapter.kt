@@ -1,5 +1,6 @@
 package com.example.habittrackerapp.ui.habits
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,11 +32,19 @@ class HabitAdapter(
         private val tvName: TextView = itemView.findViewById(R.id.tvHabitName)
         private val tvFrequency: TextView = itemView.findViewById(R.id.tvHabitFrequency)
         private val tvStreak: TextView = itemView.findViewById(R.id.tvHabitStreak)
+        private val colorIndicator: View = itemView.findViewById(R.id.colorIndicator)
 
         fun bind(habit: Habit) {
             tvName.text = habit.name
             tvFrequency.text = habit.frequency
             tvStreak.text = "🔥 ${habit.currentStreak} days"
+            
+            try {
+                val color = habit.color ?: "#2196F3"
+                colorIndicator.setBackgroundColor(Color.parseColor(color))
+            } catch (e: Exception) {
+                colorIndicator.setBackgroundColor(Color.BLUE)
+            }
         }
     }
 }
