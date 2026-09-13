@@ -63,15 +63,14 @@ class HabitAdapter(
 
         fun bind(habit: Habit) {
 
-            // Display saved habit icon
             tvIcon.text = habit.icon ?: "⭐"
 
-            // Display habit information
             tvName.text = habit.name
+
             tvFrequency.text = habit.frequency
+
             tvStreak.text = "🔥 ${habit.currentStreak} days"
 
-            // Apply saved habit colour
             try {
                 val color = habit.color ?: "#2196F3"
 

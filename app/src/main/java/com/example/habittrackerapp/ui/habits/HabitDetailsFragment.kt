@@ -1,3 +1,4 @@
+
 package com.example.habittrackerapp.ui.habits
 
 import android.graphics.Color
@@ -16,6 +17,7 @@ import com.example.habittrackerapp.R
 import com.example.habittrackerapp.api.RetrofitClient
 import com.example.habittrackerapp.models.CreateHabitRequest
 import com.example.habittrackerapp.models.Habit
+import com.example.habittrackerapp.models.UpdateHabitRequest
 import com.example.habittrackerapp.utils.TokenManager
 import retrofit2.Call
 import retrofit2.Callback
@@ -40,6 +42,16 @@ class HabitDetailsFragment : Fragment() {
     private lateinit var tvSelectedFrequency: TextView
     private lateinit var tvSelectedGoal: TextView
     private lateinit var tvSelectedDays: TextView
+
+    // =============================================================
+    // EDIT MODE
+    // =============================================================
+
+    private var editHabitId: String? = null
+
+    private var isEditMode = false
+
+    private var habitIsActive = true
 
     // =============================================================
     // SELECTED HABIT VALUES
@@ -185,54 +197,33 @@ class HabitDetailsFragment : Fragment() {
             )
 
         // =========================================================
-        // RECEIVE PRESET HABIT
+        // CHECK FOR EDIT MODE
         // =========================================================
 
-        val presetName =
+        editHabitId =
             arguments?.getString(
-                "habitName"
+                "editHabitId"
             )
 
-        val presetIcon =
-            arguments?.getString(
-                "habitIcon"
-            )
+        isEditMode =
+            !editHabitId.isNullOrBlank()
 
-        val presetIconName =
-            arguments?.getString(
-                "habitIconName"
-            )
+        // =========================================================
+        // LOAD DATA
+        // =========================================================
 
-        // ---------------------------------------------------------
-        // SET PRESET NAME
-        // ---------------------------------------------------------
+        if (isEditMode) {
 
-        if (!presetName.isNullOrBlank()) {
+            loadExistingHabit()
 
-            etHabitName.setText(
-                presetName
-            )
+        } else {
+
+            loadPresetHabit()
         }
 
-        // ---------------------------------------------------------
-        // SET PRESET ICON
-        // ---------------------------------------------------------
-
-        if (!presetIcon.isNullOrBlank()) {
-
-            selectedIcon =
-                presetIcon
-        }
-
-        if (!presetIconName.isNullOrBlank()) {
-
-            selectedIconName =
-                presetIconName
-        }
-
-        // ---------------------------------------------------------
+        // =========================================================
         // INITIAL DISPLAY
-        // ---------------------------------------------------------
+        // =========================================================
 
         updateIconDisplay()
         updateColorDisplay()
@@ -395,13 +386,193 @@ class HabitDetailsFragment : Fragment() {
         }
 
         // =========================================================
-        // SAVE HABIT
+        // SAVE BUTTON
         // =========================================================
 
         btnSaveHabit.setOnClickListener {
 
-            createHabit()
+            if (isEditMode) {
+
+                updateHabit()
+
+            } else {
+
+                createHabit()
+            }
         }
+    }
+
+    // =============================================================
+    // LOAD PRESET HABIT
+    // =============================================================
+
+    private fun loadPresetHabit() {
+
+        val presetName =
+            arguments?.getString(
+                "habitName"
+            )
+
+        val presetIcon =
+            arguments?.getString(
+                "habitIcon"
+            )
+
+        val presetIconName =
+            arguments?.getString(
+                "habitIconName"
+            )
+
+        if (!presetName.isNullOrBlank()) {
+
+            etHabitName.setText(
+                presetName
+            )
+        }
+
+        if (!presetIcon.isNullOrBlank()) {
+
+            selectedIcon =
+                presetIcon
+        }
+
+        if (!presetIconName.isNullOrBlank()) {
+
+            selectedIconName =
+                presetIconName
+        }
+
+        btnSaveHabit.text =
+            "Save Habit"
+    }
+
+    // =============================================================
+    // LOAD EXISTING HABIT FOR EDITING
+    // =============================================================
+
+    private fun loadExistingHabit() {
+
+        val name =
+            arguments?.getString(
+                "habitName"
+            )
+
+        val description =
+            arguments?.getString(
+                "habitDescription"
+            )
+
+        val frequency =
+            arguments?.getString(
+                "habitFrequency"
+            )
+
+        val color =
+            arguments?.getString(
+                "habitColor"
+            )
+
+        val icon =
+            arguments?.getString(
+                "habitIcon"
+            )
+
+        // IMPORTANT:
+        // getInt() is made non-null with ?: 1
+        val goal =
+            arguments?.getInt(
+                "habitGoalValue",
+                1
+            ) ?: 1
+
+        val days =
+            arguments?.getString(
+                "habitTaskDays"
+            )
+
+        habitIsActive =
+            arguments?.getBoolean(
+                "habitIsActive",
+                true
+            ) ?: true
+
+        // ---------------------------------------------------------
+        // BASIC INFORMATION
+        // ---------------------------------------------------------
+
+        etHabitName.setText(
+            name ?: ""
+        )
+
+        etDescription.setText(
+            description ?: ""
+        )
+
+        // ---------------------------------------------------------
+        // FREQUENCY
+        // ---------------------------------------------------------
+
+        if (!frequency.isNullOrBlank()) {
+
+            selectedFrequency =
+                frequency
+        }
+
+        // ---------------------------------------------------------
+        // COLOR
+        // ---------------------------------------------------------
+
+        if (!color.isNullOrBlank()) {
+
+            selectedColor =
+                color
+
+            selectedColorName =
+                getColorName(
+                    color
+                )
+        }
+
+        // ---------------------------------------------------------
+        // ICON
+        // ---------------------------------------------------------
+
+        if (!icon.isNullOrBlank()) {
+
+            selectedIcon =
+                icon
+        }
+
+        selectedIconName =
+            icon ?: "Default"
+
+        // ---------------------------------------------------------
+        // GOAL
+        // ---------------------------------------------------------
+
+        selectedGoal =
+            if (goal > 0) {
+                goal
+            } else {
+                1
+            }
+
+        // ---------------------------------------------------------
+        // DAYS
+        // ---------------------------------------------------------
+
+        if (!days.isNullOrBlank()) {
+
+            selectedDays =
+                days
+        }
+
+        // ---------------------------------------------------------
+        // BUTTON
+        // ---------------------------------------------------------
+
+        btnSaveHabit.text =
+            "Save Changes"
     }
 
     // =============================================================
@@ -633,7 +804,7 @@ class HabitDetailsFragment : Fragment() {
                 requireContext()
             )
 
-        if (token == null) {
+        if (token.isNullOrBlank()) {
 
             Toast.makeText(
                 requireContext(),
@@ -654,9 +825,7 @@ class HabitDetailsFragment : Fragment() {
                 name = name,
 
                 description =
-                    if (
-                        description.isEmpty()
-                    ) {
+                    if (description.isEmpty()) {
                         null
                     } else {
                         description
@@ -668,7 +837,6 @@ class HabitDetailsFragment : Fragment() {
                 color =
                     selectedColor,
 
-                // Sends the selected emoji/icon to the API
                 icon =
                     selectedIcon,
 
@@ -690,7 +858,7 @@ class HabitDetailsFragment : Fragment() {
             "Saving..."
 
         // =========================================================
-        // SEND TO API
+        // SEND CREATE REQUEST
         // =========================================================
 
         RetrofitClient.apiService
@@ -755,4 +923,232 @@ class HabitDetailsFragment : Fragment() {
                 }
             )
     }
+
+    // =============================================================
+    // UPDATE HABIT
+    // =============================================================
+
+    private fun updateHabit() {
+
+        val habitId =
+            editHabitId
+
+        if (habitId.isNullOrBlank()) {
+
+            Toast.makeText(
+                requireContext(),
+                "Unable to identify this habit",
+                Toast.LENGTH_LONG
+            ).show()
+
+            return
+        }
+
+        val name =
+            etHabitName.text
+                .toString()
+                .trim()
+
+        val description =
+            etDescription.text
+                .toString()
+                .trim()
+
+        // ---------------------------------------------------------
+        // VALIDATE NAME
+        // ---------------------------------------------------------
+
+        if (name.isEmpty()) {
+
+            etHabitName.error =
+                "Please enter a habit name"
+
+            etHabitName.requestFocus()
+
+            return
+        }
+
+        // ---------------------------------------------------------
+        // VALIDATE GOAL
+        // ---------------------------------------------------------
+
+        if (selectedGoal <= 0) {
+
+            Toast.makeText(
+                requireContext(),
+                "Please select a valid goal",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+        // ---------------------------------------------------------
+        // VALIDATE DAYS
+        // ---------------------------------------------------------
+
+        if (selectedDays.isBlank()) {
+
+            Toast.makeText(
+                requireContext(),
+                "Please select at least one day",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+        // ---------------------------------------------------------
+        // GET TOKEN
+        // ---------------------------------------------------------
+
+        val token =
+            TokenManager.getToken(
+                requireContext()
+            )
+
+        if (token.isNullOrBlank()) {
+
+            Toast.makeText(
+                requireContext(),
+                "Please log in first",
+                Toast.LENGTH_LONG
+            ).show()
+
+            return
+        }
+
+        // =========================================================
+        // UPDATE REQUEST
+        // =========================================================
+
+        val request =
+            UpdateHabitRequest(
+
+                name = name,
+
+                description =
+                    if (description.isEmpty()) {
+                        null
+                    } else {
+                        description
+                    },
+
+                frequency =
+                    selectedFrequency,
+
+                isActive =
+                    habitIsActive,
+
+                color =
+                    selectedColor,
+
+                icon =
+                    selectedIcon,
+
+                goalValue =
+                    selectedGoal,
+
+                taskDays =
+                    selectedDays
+            )
+
+        // ---------------------------------------------------------
+        // DISABLE BUTTON
+        // ---------------------------------------------------------
+
+        btnSaveHabit.isEnabled =
+            false
+
+        btnSaveHabit.text =
+            "Saving..."
+
+        // =========================================================
+        // SEND UPDATE REQUEST
+        // =========================================================
+
+        RetrofitClient.apiService
+            .updateHabit(
+                "Bearer $token",
+                habitId,
+                request
+            )
+            .enqueue(
+                object : Callback<Habit> {
+
+                    override fun onResponse(
+                        call: Call<Habit>,
+                        response: Response<Habit>
+                    ) {
+
+                        btnSaveHabit.isEnabled =
+                            true
+
+                        btnSaveHabit.text =
+                            "Save Changes"
+
+                        if (
+                            response.isSuccessful
+                        ) {
+
+                            Toast.makeText(
+                                requireContext(),
+                                "Habit updated successfully!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            findNavController()
+                                .navigateUp()
+
+                        } else if (
+                            response.code() == 401
+                        ) {
+
+                            Toast.makeText(
+                                requireContext(),
+                                "Session expired. Please log in again.",
+                                Toast.LENGTH_LONG
+                            ).show()
+
+                        } else if (
+                            response.code() == 404
+                        ) {
+
+                            Toast.makeText(
+                                requireContext(),
+                                "Habit not found.",
+                                Toast.LENGTH_LONG
+                            ).show()
+
+                        } else {
+
+                            Toast.makeText(
+                                requireContext(),
+                                "Failed to update habit. Code: ${response.code()}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+
+                    override fun onFailure(
+                        call: Call<Habit>,
+                        t: Throwable
+                    ) {
+
+                        btnSaveHabit.isEnabled =
+                            true
+
+                        btnSaveHabit.text =
+                            "Save Changes"
+
+                        Toast.makeText(
+                            requireContext(),
+                            "Error: ${t.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            )
+    }
 }
+
