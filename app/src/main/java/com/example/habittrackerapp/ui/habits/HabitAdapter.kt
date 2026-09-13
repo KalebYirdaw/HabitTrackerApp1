@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.habittrackerapp.R
@@ -11,7 +12,8 @@ import com.example.habittrackerapp.models.Habit
 
 class HabitAdapter(
     private val habits: List<Habit>,
-    private val onItemClick: (Habit) -> Unit
+    private val onItemClick: (Habit) -> Unit,
+    private val onCompleteClick: (Habit) -> Unit
 ) : RecyclerView.Adapter<HabitAdapter.HabitViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -33,8 +35,14 @@ class HabitAdapter(
 
         holder.bind(habit)
 
+        // Existing card click opens Edit Habit
         holder.itemView.setOnClickListener {
             onItemClick(habit)
+        }
+
+        // New Complete Today button
+        holder.completeButton.setOnClickListener {
+            onCompleteClick(habit)
         }
     }
 
@@ -61,6 +69,9 @@ class HabitAdapter(
         private val tvStreak: TextView =
             itemView.findViewById(R.id.tvHabitStreak)
 
+        val completeButton: Button =
+            itemView.findViewById(R.id.btnCompleteHabit)
+
         fun bind(habit: Habit) {
 
             tvIcon.text = habit.icon ?: "⭐"
@@ -69,10 +80,13 @@ class HabitAdapter(
 
             tvFrequency.text = habit.frequency
 
-            tvStreak.text = "🔥 ${habit.currentStreak} days"
+            tvStreak.text =
+                "🔥 ${habit.currentStreak} days"
 
             try {
-                val color = habit.color ?: "#2196F3"
+
+                val color =
+                    habit.color ?: "#2196F3"
 
                 habitCard.setBackgroundColor(
                     Color.parseColor(color)

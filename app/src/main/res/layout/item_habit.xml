@@ -18,7 +18,8 @@
         android:gravity="center_vertical"
         android:padding="16dp">
 
-        <!-- Habit Icon -->
+        <!-- HABIT ICON -->
+
         <TextView
             android:id="@+id/tvHabitIcon"
             android:layout_width="60dp"
@@ -28,7 +29,8 @@
             android:textSize="36sp"
             android:importantForAccessibility="no" />
 
-        <!-- Habit Information -->
+        <!-- HABIT INFORMATION -->
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -63,6 +65,17 @@
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/white" />
+
+            <!-- COMPLETE TODAY BUTTON -->
+
+            <Button
+                android:id="@+id/btnCompleteHabit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="✓ Complete Today"
+                android:textSize="13sp"
+                android:textAllCaps="false" />
 
         </LinearLayout>
 

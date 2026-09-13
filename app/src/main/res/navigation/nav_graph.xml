@@ -16,7 +16,6 @@
         android:label="My Habits"
         tools:layout="@layout/fragment_habits">
 
-        <!-- Open Habit Details when editing an existing habit -->
         <action
             android:id="@+id/action_habits_to_details"
             app:destination="@id/nav_habit_details" />
@@ -45,7 +44,6 @@
         android:label="Add Habit"
         tools:layout="@layout/fragment_add_habit">
 
-        <!-- Open Habit Details when creating a new habit -->
         <action
             android:id="@+id/action_addHabit_to_details"
             app:destination="@id/nav_habit_details" />
@@ -63,27 +61,22 @@
         android:label="Habit Details"
         tools:layout="@layout/fragment_habit_details">
 
-        <!-- Open Color Picker -->
         <action
             android:id="@+id/action_details_to_color"
             app:destination="@id/nav_color_picker" />
 
-        <!-- Open Goal Picker -->
         <action
             android:id="@+id/action_details_to_goal"
             app:destination="@id/nav_goal_picker" />
 
-        <!-- Open Frequency Picker -->
         <action
             android:id="@+id/action_details_to_freq"
             app:destination="@id/nav_freq_picker" />
 
-        <!-- Open Days Selection -->
         <action
             android:id="@+id/action_details_to_days"
             app:destination="@id/nav_days_selection" />
 
-        <!-- Open Icon Picker -->
         <action
             android:id="@+id/action_details_to_icon"
             app:destination="@id/nav_icon_picker" />
@@ -152,7 +145,7 @@
 
     <fragment
         android:id="@+id/nav_journal"
-        android:name="com.example.habittrackerapp.ui.journal.JournalFragment"
+        android:name="com.example.habittrackerapp.ui.habits.JournalFragment"
         android:label="Journal"
         tools:layout="@layout/fragment_journal" />
 
@@ -168,4 +161,3 @@
         tools:layout="@layout/fragment_settings" />
 
 </navigation>
-
