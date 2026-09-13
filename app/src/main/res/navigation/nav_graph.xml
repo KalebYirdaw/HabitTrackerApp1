@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     app:startDestination="@id/nav_habits">
+
+    <!-- ========================================================= -->
+    <!-- HABITS -->
+    <!-- ========================================================= -->
 
     <fragment
         android:id="@+id/nav_habits"
@@ -10,11 +16,19 @@
         android:label="My Habits"
         tools:layout="@layout/fragment_habits" />
 
+    <!-- ========================================================= -->
+    <!-- STATISTICS -->
+    <!-- ========================================================= -->
+
     <fragment
         android:id="@+id/nav_stats"
         android:name="com.example.habittrackerapp.ui.stats.StatsFragment"
         android:label="Statistics"
         tools:layout="@layout/fragment_stats" />
+
+    <!-- ========================================================= -->
+    <!-- ADD HABIT -->
+    <!-- ========================================================= -->
 
     <fragment
         android:id="@+id/nav_add_habit"
@@ -38,22 +52,30 @@
         android:label="Habit Details"
         tools:layout="@layout/fragment_habit_details">
 
+        <!-- Open Color Picker -->
         <action
             android:id="@+id/action_details_to_color"
             app:destination="@id/nav_color_picker" />
 
+        <!-- Open Goal Picker -->
         <action
             android:id="@+id/action_details_to_goal"
             app:destination="@id/nav_goal_picker" />
 
+        <!-- Open Frequency Picker -->
         <action
             android:id="@+id/action_details_to_freq"
             app:destination="@id/nav_freq_picker" />
 
-        <!-- NEW: Open Days Selection -->
+        <!-- Open Days Selection -->
         <action
             android:id="@+id/action_details_to_days"
             app:destination="@id/nav_days_selection" />
+
+        <!-- Open Icon Picker -->
+        <action
+            android:id="@+id/action_details_to_icon"
+            app:destination="@id/nav_icon_picker" />
 
     </fragment>
 
@@ -96,6 +118,16 @@
         android:name="com.example.habittrackerapp.ui.habits.DaysSelectionFragment"
         android:label="Choose Days"
         tools:layout="@layout/fragment_days_selection" />
+
+    <!-- ========================================================= -->
+    <!-- ICON PICKER -->
+    <!-- ========================================================= -->
+
+    <fragment
+        android:id="@+id/nav_icon_picker"
+        android:name="com.example.habittrackerapp.ui.habits.IconPickerFragment"
+        android:label="Choose Icon"
+        tools:layout="@layout/fragment_icon_picker" />
 
     <!-- ========================================================= -->
     <!-- JOURNAL -->

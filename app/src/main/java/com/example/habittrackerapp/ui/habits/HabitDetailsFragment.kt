@@ -1,8 +1,8 @@
 package com.example.habittrackerapp.ui.habits
 
 import android.graphics.Color
-import android.os.Bundle
 import android.graphics.drawable.GradientDrawable
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,52 +23,44 @@ import retrofit2.Response
 
 class HabitDetailsFragment : Fragment() {
 
-    // ------------------------------------------------------------
-    // Habit fields
-    // ------------------------------------------------------------
-
     private lateinit var etHabitName: EditText
     private lateinit var etDescription: EditText
     private lateinit var btnSaveHabit: Button
 
-    // ------------------------------------------------------------
-    // Setting cards
-    // ------------------------------------------------------------
-
+    private lateinit var cardIcon: View
     private lateinit var cardColor: View
     private lateinit var cardFrequency: View
     private lateinit var cardGoal: View
     private lateinit var cardDays: View
 
-    // ------------------------------------------------------------
-    // Setting display views
-    // ------------------------------------------------------------
-
+    private lateinit var iconPreview: TextView
+    private lateinit var tvSelectedIcon: TextView
     private lateinit var colorPreview: View
     private lateinit var tvSelectedColor: TextView
     private lateinit var tvSelectedFrequency: TextView
     private lateinit var tvSelectedGoal: TextView
     private lateinit var tvSelectedDays: TextView
 
-    // ------------------------------------------------------------
-    // Selected habit values
-    // ------------------------------------------------------------
+    // =============================================================
+    // SELECTED HABIT VALUES
+    // =============================================================
+
+    private var selectedIcon = "⭐"
+    private var selectedIconName = "Default"
 
     private var selectedColor = "#90CAF9"
-
     private var selectedColorName = "Soft Blue"
 
     private var selectedFrequency = "Daily"
 
     private var selectedGoal = 1
 
-    // Default is every day
     private var selectedDays =
         "Mon,Tue,Wed,Thu,Fri,Sat,Sun"
 
-    // ------------------------------------------------------------
-    // Create screen
-    // ------------------------------------------------------------
+    // =============================================================
+    // CREATE VIEW
+    // =============================================================
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -83,9 +75,9 @@ class HabitDetailsFragment : Fragment() {
         )
     }
 
-    // ------------------------------------------------------------
-    // Setup screen
-    // ------------------------------------------------------------
+    // =============================================================
+    // VIEW CREATED
+    // =============================================================
 
     override fun onViewCreated(
         view: View,
@@ -97,81 +89,182 @@ class HabitDetailsFragment : Fragment() {
             savedInstanceState
         )
 
-        // --------------------------------------------------------
-        // Find habit fields
-        // --------------------------------------------------------
+        // ---------------------------------------------------------
+        // BASIC VIEWS
+        // ---------------------------------------------------------
 
         etHabitName =
-            view.findViewById(R.id.etHabitName)
+            view.findViewById(
+                R.id.etHabitName
+            )
 
         etDescription =
-            view.findViewById(R.id.etDescription)
+            view.findViewById(
+                R.id.etDescription
+            )
 
         btnSaveHabit =
-            view.findViewById(R.id.btnSaveHabit)
+            view.findViewById(
+                R.id.btnSaveHabit
+            )
 
-        // --------------------------------------------------------
-        // Find setting cards
-        // --------------------------------------------------------
+        // ---------------------------------------------------------
+        // CARDS
+        // ---------------------------------------------------------
+
+        cardIcon =
+            view.findViewById(
+                R.id.cardIcon
+            )
 
         cardColor =
-            view.findViewById(R.id.cardColor)
+            view.findViewById(
+                R.id.cardColor
+            )
 
         cardFrequency =
-            view.findViewById(R.id.cardFrequency)
+            view.findViewById(
+                R.id.cardFrequency
+            )
 
         cardGoal =
-            view.findViewById(R.id.cardGoal)
+            view.findViewById(
+                R.id.cardGoal
+            )
 
         cardDays =
-            view.findViewById(R.id.cardDays)
+            view.findViewById(
+                R.id.cardDays
+            )
 
-        // --------------------------------------------------------
-        // Find setting display views
-        // --------------------------------------------------------
+        // ---------------------------------------------------------
+        // ICON VIEWS
+        // ---------------------------------------------------------
+
+        iconPreview =
+            view.findViewById(
+                R.id.iconPreview
+            )
+
+        tvSelectedIcon =
+            view.findViewById(
+                R.id.tvSelectedIcon
+            )
+
+        // ---------------------------------------------------------
+        // COLOR VIEWS
+        // ---------------------------------------------------------
 
         colorPreview =
-            view.findViewById(R.id.colorPreview)
+            view.findViewById(
+                R.id.colorPreview
+            )
 
         tvSelectedColor =
-            view.findViewById(R.id.tvSelectedColor)
+            view.findViewById(
+                R.id.tvSelectedColor
+            )
+
+        // ---------------------------------------------------------
+        // OTHER SETTINGS
+        // ---------------------------------------------------------
 
         tvSelectedFrequency =
-            view.findViewById(R.id.tvSelectedFrequency)
+            view.findViewById(
+                R.id.tvSelectedFrequency
+            )
 
         tvSelectedGoal =
-            view.findViewById(R.id.tvSelectedGoal)
+            view.findViewById(
+                R.id.tvSelectedGoal
+            )
 
         tvSelectedDays =
-            view.findViewById(R.id.tvSelectedDays)
+            view.findViewById(
+                R.id.tvSelectedDays
+            )
 
-        // --------------------------------------------------------
-        // Load preset habit name
-        // --------------------------------------------------------
+        // =========================================================
+        // RECEIVE PRESET HABIT
+        // =========================================================
 
         val presetName =
-            arguments?.getString("habitName")
+            arguments?.getString(
+                "habitName"
+            )
+
+        val presetIcon =
+            arguments?.getString(
+                "habitIcon"
+            )
+
+        val presetIconName =
+            arguments?.getString(
+                "habitIconName"
+            )
+
+        // ---------------------------------------------------------
+        // SET PRESET NAME
+        // ---------------------------------------------------------
 
         if (!presetName.isNullOrBlank()) {
 
-            etHabitName.setText(presetName)
+            etHabitName.setText(
+                presetName
+            )
         }
 
-        // --------------------------------------------------------
-        // Set initial values
-        // --------------------------------------------------------
+        // ---------------------------------------------------------
+        // SET PRESET ICON
+        // ---------------------------------------------------------
 
+        if (!presetIcon.isNullOrBlank()) {
+
+            selectedIcon =
+                presetIcon
+        }
+
+        if (!presetIconName.isNullOrBlank()) {
+
+            selectedIconName =
+                presetIconName
+        }
+
+        // ---------------------------------------------------------
+        // INITIAL DISPLAY
+        // ---------------------------------------------------------
+
+        updateIconDisplay()
         updateColorDisplay()
-
         updateFrequencyDisplay()
-
         updateGoalDisplay()
-
         updateDaysDisplay()
 
-        // --------------------------------------------------------
-        // Listen for colour selection
-        // --------------------------------------------------------
+        // =========================================================
+        // ICON PICKER RESULT
+        // =========================================================
+
+        parentFragmentManager.setFragmentResultListener(
+            "icon_picker_result",
+            viewLifecycleOwner
+        ) { _, bundle ->
+
+            selectedIcon =
+                bundle.getString(
+                    "selectedIcon"
+                ) ?: "⭐"
+
+            selectedIconName =
+                bundle.getString(
+                    "selectedIconName"
+                ) ?: "Default"
+
+            updateIconDisplay()
+        }
+
+        // =========================================================
+        // COLOR PICKER RESULT
+        // =========================================================
 
         parentFragmentManager.setFragmentResultListener(
             "color_picker_result",
@@ -179,19 +272,23 @@ class HabitDetailsFragment : Fragment() {
         ) { _, bundle ->
 
             selectedColor =
-                bundle.getString("selectedColor")
-                    ?: "#90CAF9"
+                bundle.getString(
+                    "selectedColor"
+                ) ?: "#90CAF9"
 
             selectedColorName =
-                bundle.getString("selectedColorName")
-                    ?: getColorName(selectedColor)
+                bundle.getString(
+                    "selectedColorName"
+                ) ?: getColorName(
+                    selectedColor
+                )
 
             updateColorDisplay()
         }
 
-        // --------------------------------------------------------
-        // Listen for frequency selection
-        // --------------------------------------------------------
+        // =========================================================
+        // FREQUENCY PICKER RESULT
+        // =========================================================
 
         parentFragmentManager.setFragmentResultListener(
             "frequency_picker_result",
@@ -199,15 +296,16 @@ class HabitDetailsFragment : Fragment() {
         ) { _, bundle ->
 
             selectedFrequency =
-                bundle.getString("selectedFrequency")
-                    ?: "Daily"
+                bundle.getString(
+                    "selectedFrequency"
+                ) ?: "Daily"
 
             updateFrequencyDisplay()
         }
 
-        // --------------------------------------------------------
-        // Listen for goal selection
-        // --------------------------------------------------------
+        // =========================================================
+        // GOAL PICKER RESULT
+        // =========================================================
 
         parentFragmentManager.setFragmentResultListener(
             "goal_picker_result",
@@ -223,9 +321,9 @@ class HabitDetailsFragment : Fragment() {
             updateGoalDisplay()
         }
 
-        // --------------------------------------------------------
-        // Listen for days selection
-        // --------------------------------------------------------
+        // =========================================================
+        // DAYS SELECTION RESULT
+        // =========================================================
 
         parentFragmentManager.setFragmentResultListener(
             "days_selection_result",
@@ -233,15 +331,28 @@ class HabitDetailsFragment : Fragment() {
         ) { _, bundle ->
 
             selectedDays =
-                bundle.getString("selectedDays")
+                bundle.getString(
+                    "selectedDays"
+                )
                     ?: "Mon,Tue,Wed,Thu,Fri,Sat,Sun"
 
             updateDaysDisplay()
         }
 
-        // --------------------------------------------------------
-        // Open Colour page
-        // --------------------------------------------------------
+        // =========================================================
+        // ICON CARD
+        // =========================================================
+
+        cardIcon.setOnClickListener {
+
+            findNavController().navigate(
+                R.id.action_details_to_icon
+            )
+        }
+
+        // =========================================================
+        // COLOR CARD
+        // =========================================================
 
         cardColor.setOnClickListener {
 
@@ -250,9 +361,9 @@ class HabitDetailsFragment : Fragment() {
             )
         }
 
-        // --------------------------------------------------------
-        // Open Frequency page
-        // --------------------------------------------------------
+        // =========================================================
+        // FREQUENCY CARD
+        // =========================================================
 
         cardFrequency.setOnClickListener {
 
@@ -261,9 +372,9 @@ class HabitDetailsFragment : Fragment() {
             )
         }
 
-        // --------------------------------------------------------
-        // Open Goal page
-        // --------------------------------------------------------
+        // =========================================================
+        // GOAL CARD
+        // =========================================================
 
         cardGoal.setOnClickListener {
 
@@ -272,9 +383,9 @@ class HabitDetailsFragment : Fragment() {
             )
         }
 
-        // --------------------------------------------------------
-        // Open Days page
-        // --------------------------------------------------------
+        // =========================================================
+        // DAYS CARD
+        // =========================================================
 
         cardDays.setOnClickListener {
 
@@ -283,9 +394,9 @@ class HabitDetailsFragment : Fragment() {
             )
         }
 
-        // --------------------------------------------------------
-        // Save habit
-        // --------------------------------------------------------
+        // =========================================================
+        // SAVE HABIT
+        // =========================================================
 
         btnSaveHabit.setOnClickListener {
 
@@ -293,9 +404,22 @@ class HabitDetailsFragment : Fragment() {
         }
     }
 
-    // ============================================================
-    // COLOUR DISPLAY
-    // ============================================================
+    // =============================================================
+    // ICON DISPLAY
+    // =============================================================
+
+    private fun updateIconDisplay() {
+
+        iconPreview.text =
+            selectedIcon
+
+        tvSelectedIcon.text =
+            selectedIconName
+    }
+
+    // =============================================================
+    // COLOR DISPLAY
+    // =============================================================
 
     private fun updateColorDisplay() {
 
@@ -306,18 +430,21 @@ class HabitDetailsFragment : Fragment() {
             GradientDrawable()
 
         drawable.setColor(
-            Color.parseColor(selectedColor)
+            Color.parseColor(
+                selectedColor
+            )
         )
 
-        drawable.cornerRadius = 12f
+        drawable.cornerRadius =
+            12f
 
         colorPreview.background =
             drawable
     }
 
-    // ============================================================
+    // =============================================================
     // FREQUENCY DISPLAY
-    // ============================================================
+    // =============================================================
 
     private fun updateFrequencyDisplay() {
 
@@ -325,30 +452,28 @@ class HabitDetailsFragment : Fragment() {
             selectedFrequency
     }
 
-    // ============================================================
+    // =============================================================
     // GOAL DISPLAY
-    // ============================================================
+    // =============================================================
 
     private fun updateGoalDisplay() {
 
         tvSelectedGoal.text =
             "$selectedGoal time" +
-                    if (selectedGoal == 1) {
+                    if (
+                        selectedGoal == 1
+                    ) {
                         ""
                     } else {
                         "s"
                     }
     }
 
-    // ============================================================
+    // =============================================================
     // DAYS DISPLAY
-    // ============================================================
+    // =============================================================
 
     private fun updateDaysDisplay() {
-
-        // --------------------------------------------------------
-        // If every day is selected
-        // --------------------------------------------------------
 
         if (
             selectedDays ==
@@ -361,10 +486,6 @@ class HabitDetailsFragment : Fragment() {
             return
         }
 
-        // --------------------------------------------------------
-        // Convert stored abbreviations into readable text
-        // --------------------------------------------------------
-
         val readableDays =
             selectedDays
                 .split(",")
@@ -373,17 +494,11 @@ class HabitDetailsFragment : Fragment() {
                     when (day) {
 
                         "Mon" -> "Mon"
-
                         "Tue" -> "Tue"
-
                         "Wed" -> "Wed"
-
                         "Thu" -> "Thu"
-
                         "Fri" -> "Fri"
-
                         "Sat" -> "Sat"
-
                         "Sun" -> "Sun"
 
                         else -> day
@@ -391,18 +506,22 @@ class HabitDetailsFragment : Fragment() {
                 }
 
         tvSelectedDays.text =
-            readableDays.joinToString(", ")
+            readableDays.joinToString(
+                ", "
+            )
     }
 
-    // ============================================================
-    // GET COLOUR NAME
-    // ============================================================
+    // =============================================================
+    // COLOR NAME
+    // =============================================================
 
     private fun getColorName(
         color: String
     ): String {
 
-        return when (color.uppercase()) {
+        return when (
+            color.uppercase()
+        ) {
 
             "#90CAF9" ->
                 "Soft Blue"
@@ -445,15 +564,11 @@ class HabitDetailsFragment : Fragment() {
         }
     }
 
-    // ============================================================
+    // =============================================================
     // CREATE HABIT
-    // ============================================================
+    // =============================================================
 
     private fun createHabit() {
-
-        // --------------------------------------------------------
-        // Get values
-        // --------------------------------------------------------
 
         val name =
             etHabitName.text
@@ -465,9 +580,9 @@ class HabitDetailsFragment : Fragment() {
                 .toString()
                 .trim()
 
-        // --------------------------------------------------------
-        // Validate name
-        // --------------------------------------------------------
+        // ---------------------------------------------------------
+        // VALIDATE NAME
+        // ---------------------------------------------------------
 
         if (name.isEmpty()) {
 
@@ -479,9 +594,9 @@ class HabitDetailsFragment : Fragment() {
             return
         }
 
-        // --------------------------------------------------------
-        // Validate goal
-        // --------------------------------------------------------
+        // ---------------------------------------------------------
+        // VALIDATE GOAL
+        // ---------------------------------------------------------
 
         if (selectedGoal <= 0) {
 
@@ -494,9 +609,9 @@ class HabitDetailsFragment : Fragment() {
             return
         }
 
-        // --------------------------------------------------------
-        // Validate days
-        // --------------------------------------------------------
+        // ---------------------------------------------------------
+        // VALIDATE DAYS
+        // ---------------------------------------------------------
 
         if (selectedDays.isBlank()) {
 
@@ -509,9 +624,9 @@ class HabitDetailsFragment : Fragment() {
             return
         }
 
-        // --------------------------------------------------------
-        // Get authentication token
-        // --------------------------------------------------------
+        // ---------------------------------------------------------
+        // GET TOKEN
+        // ---------------------------------------------------------
 
         val token =
             TokenManager.getToken(
@@ -529,9 +644,9 @@ class HabitDetailsFragment : Fragment() {
             return
         }
 
-        // --------------------------------------------------------
-        // Create API request
-        // --------------------------------------------------------
+        // =========================================================
+        // CREATE REQUEST
+        // =========================================================
 
         val request =
             CreateHabitRequest(
@@ -539,7 +654,9 @@ class HabitDetailsFragment : Fragment() {
                 name = name,
 
                 description =
-                    if (description.isEmpty()) {
+                    if (
+                        description.isEmpty()
+                    ) {
                         null
                     } else {
                         description
@@ -551,18 +668,20 @@ class HabitDetailsFragment : Fragment() {
                 color =
                     selectedColor,
 
+                // Sends the selected emoji/icon to the API
+                icon =
+                    selectedIcon,
+
                 goalValue =
                     selectedGoal,
 
-                // NEW:
-                // Send the days selected by the user
                 taskDays =
                     selectedDays
             )
 
-        // --------------------------------------------------------
-        // Disable button while saving
-        // --------------------------------------------------------
+        // ---------------------------------------------------------
+        // DISABLE BUTTON
+        // ---------------------------------------------------------
 
         btnSaveHabit.isEnabled =
             false
@@ -570,9 +689,9 @@ class HabitDetailsFragment : Fragment() {
         btnSaveHabit.text =
             "Saving..."
 
-        // --------------------------------------------------------
-        // Send request to API
-        // --------------------------------------------------------
+        // =========================================================
+        // SEND TO API
+        // =========================================================
 
         RetrofitClient.apiService
             .createHabit(
@@ -587,18 +706,15 @@ class HabitDetailsFragment : Fragment() {
                         response: Response<Habit>
                     ) {
 
-                        // Re-enable button
                         btnSaveHabit.isEnabled =
                             true
 
                         btnSaveHabit.text =
                             "Save Habit"
 
-                        // ------------------------------------------------
-                        // Successful response
-                        // ------------------------------------------------
-
-                        if (response.isSuccessful) {
+                        if (
+                            response.isSuccessful
+                        ) {
 
                             Toast.makeText(
                                 requireContext(),
@@ -618,10 +734,6 @@ class HabitDetailsFragment : Fragment() {
                             ).show()
                         }
                     }
-
-                    // ----------------------------------------------------
-                    // Network/API failure
-                    // ----------------------------------------------------
 
                     override fun onFailure(
                         call: Call<Habit>,

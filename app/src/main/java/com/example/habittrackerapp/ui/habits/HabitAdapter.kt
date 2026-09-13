@@ -38,7 +38,9 @@ class HabitAdapter(
         }
     }
 
-    override fun getItemCount() = habits.size
+    override fun getItemCount(): Int {
+        return habits.size
+    }
 
     class HabitViewHolder(
         itemView: View
@@ -46,6 +48,9 @@ class HabitAdapter(
 
         private val habitCard: View =
             itemView.findViewById(R.id.habitCard)
+
+        private val tvIcon: TextView =
+            itemView.findViewById(R.id.tvHabitIcon)
 
         private val tvName: TextView =
             itemView.findViewById(R.id.tvHabitName)
@@ -58,14 +63,16 @@ class HabitAdapter(
 
         fun bind(habit: Habit) {
 
+            // Display saved habit icon
+            tvIcon.text = habit.icon ?: "⭐"
+
+            // Display habit information
             tvName.text = habit.name
-
             tvFrequency.text = habit.frequency
-
             tvStreak.text = "🔥 ${habit.currentStreak} days"
 
+            // Apply saved habit colour
             try {
-
                 val color = habit.color ?: "#2196F3"
 
                 habitCard.setBackgroundColor(
