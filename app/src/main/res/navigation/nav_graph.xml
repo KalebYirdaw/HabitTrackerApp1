@@ -21,26 +21,45 @@
         android:name="com.example.habittrackerapp.ui.habits.AddHabitFragment"
         android:label="Add Habit"
         tools:layout="@layout/fragment_add_habit">
+
         <action
             android:id="@+id/action_addHabit_to_details"
             app:destination="@id/nav_habit_details" />
+
     </fragment>
+
+    <!-- ========================================================= -->
+    <!-- HABIT DETAILS -->
+    <!-- ========================================================= -->
 
     <fragment
         android:id="@+id/nav_habit_details"
         android:name="com.example.habittrackerapp.ui.habits.HabitDetailsFragment"
         android:label="Habit Details"
         tools:layout="@layout/fragment_habit_details">
+
         <action
             android:id="@+id/action_details_to_color"
             app:destination="@id/nav_color_picker" />
+
         <action
             android:id="@+id/action_details_to_goal"
             app:destination="@id/nav_goal_picker" />
+
         <action
             android:id="@+id/action_details_to_freq"
             app:destination="@id/nav_freq_picker" />
+
+        <!-- NEW: Open Days Selection -->
+        <action
+            android:id="@+id/action_details_to_days"
+            app:destination="@id/nav_days_selection" />
+
     </fragment>
+
+    <!-- ========================================================= -->
+    <!-- COLOR PICKER -->
+    <!-- ========================================================= -->
 
     <fragment
         android:id="@+id/nav_color_picker"
@@ -48,11 +67,19 @@
         android:label="Choose Color"
         tools:layout="@layout/fragment_color_picker" />
 
+    <!-- ========================================================= -->
+    <!-- GOAL PICKER -->
+    <!-- ========================================================= -->
+
     <fragment
         android:id="@+id/nav_goal_picker"
         android:name="com.example.habittrackerapp.ui.habits.GoalPickerFragment"
         android:label="Set Goal"
         tools:layout="@layout/fragment_goal_picker" />
+
+    <!-- ========================================================= -->
+    <!-- FREQUENCY PICKER -->
+    <!-- ========================================================= -->
 
     <fragment
         android:id="@+id/nav_freq_picker"
@@ -60,11 +87,29 @@
         android:label="Set Frequency"
         tools:layout="@layout/fragment_frequency_picker" />
 
+    <!-- ========================================================= -->
+    <!-- DAYS SELECTION -->
+    <!-- ========================================================= -->
+
+    <fragment
+        android:id="@+id/nav_days_selection"
+        android:name="com.example.habittrackerapp.ui.habits.DaysSelectionFragment"
+        android:label="Choose Days"
+        tools:layout="@layout/fragment_days_selection" />
+
+    <!-- ========================================================= -->
+    <!-- JOURNAL -->
+    <!-- ========================================================= -->
+
     <fragment
         android:id="@+id/nav_journal"
         android:name="com.example.habittrackerapp.ui.journal.JournalFragment"
         android:label="Journal"
         tools:layout="@layout/fragment_journal" />
+
+    <!-- ========================================================= -->
+    <!-- SETTINGS -->
+    <!-- ========================================================= -->
 
     <fragment
         android:id="@+id/nav_settings"

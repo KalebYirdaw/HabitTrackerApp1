@@ -14,36 +14,69 @@ class HabitAdapter(
     private val onItemClick: (Habit) -> Unit
 ) : RecyclerView.Adapter<HabitAdapter.HabitViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HabitViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): HabitViewHolder {
+
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_habit, parent, false)
+
         return HabitViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: HabitViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: HabitViewHolder,
+        position: Int
+    ) {
         val habit = habits[position]
+
         holder.bind(habit)
-        holder.itemView.setOnClickListener { onItemClick(habit) }
+
+        holder.itemView.setOnClickListener {
+            onItemClick(habit)
+        }
     }
 
     override fun getItemCount() = habits.size
 
-    class HabitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvName: TextView = itemView.findViewById(R.id.tvHabitName)
-        private val tvFrequency: TextView = itemView.findViewById(R.id.tvHabitFrequency)
-        private val tvStreak: TextView = itemView.findViewById(R.id.tvHabitStreak)
-        private val colorIndicator: View = itemView.findViewById(R.id.colorIndicator)
+    class HabitViewHolder(
+        itemView: View
+    ) : RecyclerView.ViewHolder(itemView) {
+
+        private val habitCard: View =
+            itemView.findViewById(R.id.habitCard)
+
+        private val tvName: TextView =
+            itemView.findViewById(R.id.tvHabitName)
+
+        private val tvFrequency: TextView =
+            itemView.findViewById(R.id.tvHabitFrequency)
+
+        private val tvStreak: TextView =
+            itemView.findViewById(R.id.tvHabitStreak)
 
         fun bind(habit: Habit) {
+
             tvName.text = habit.name
+
             tvFrequency.text = habit.frequency
+
             tvStreak.text = "🔥 ${habit.currentStreak} days"
-            
+
             try {
+
                 val color = habit.color ?: "#2196F3"
-                colorIndicator.setBackgroundColor(Color.parseColor(color))
+
+                habitCard.setBackgroundColor(
+                    Color.parseColor(color)
+                )
+
             } catch (e: Exception) {
-                colorIndicator.setBackgroundColor(Color.BLUE)
+
+                habitCard.setBackgroundColor(
+                    Color.parseColor("#2196F3")
+                )
             }
         }
     }
